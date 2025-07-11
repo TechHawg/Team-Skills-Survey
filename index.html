@@ -1,0 +1,1792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSS Team Skills & Interest Survey</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-color: #0093D0;
+            --primary-dark: #006fa0;
+            --primary-light: #e6f4fa;
+            --danger-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --info-color: #3498db;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            animation: fadeInDown 0.6s ease;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+            animation: fadeInUp 0.6s ease 0.2s both;
+        }
+        
+        /* Progress Bar */
+        .progress-container {
+            background: rgba(255,255,255,0.1);
+            height: 8px;
+            border-radius: 4px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: white;
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.3s ease;
+            max-width: 100%;
+        }
+        
+        .progress-text {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        
+        form {
+            padding: 40px 30px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+            animation-delay: 0.1s;
+        }
+        
+        .section-title {
+            font-size: 1.3em;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+        
+        .section-title::before {
+            content: '🧠';
+            font-size: 1.2em;
+        }
+        
+        .section-title.participation::before {
+            content: '🤝';
+        }
+        
+        .section-title.complete::after {
+            content: '✓';
+            position: absolute;
+            right: 0;
+            color: var(--success-color);
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        .section-title.optional::after {
+            content: '';
+            background: none;
+        }
+        
+        .section-title small {
+            color: #999;
+            font-weight: normal;
+            font-size: 0.7em;
+            margin-left: 8px;
+            background: #f0f0f0;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+        
+        .section-title small[style*="background: #e74c3c"] {
+            font-weight: 600;
+        }
+        
+        label small {
+            color: #999;
+            font-weight: normal;
+            font-size: 0.85em;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #555;
+        }
+        
+        .required {
+            color: var(--danger-color);
+            font-weight: normal;
+        }
+        
+        .required::after {
+            content: ' *';
+            color: var(--danger-color);
+        }
+        
+        /* Skill Groups */
+        .skill-groups {
+            margin-bottom: 20px;
+        }
+        
+        .skill-group {
+            margin-bottom: 25px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            border: 2px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+        
+        .skill-group:hover {
+            border-color: var(--primary-light);
+        }
+        
+        .skill-group-title {
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+        
+        .skill-matrix {
+            overflow-x: auto;
+            margin-bottom: 10px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+        
+        th {
+            background: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        th:first-child {
+            text-align: left;
+            min-width: 200px;
+        }
+        
+        td:first-child {
+            text-align: left;
+            font-weight: 500;
+            background: #fafafa;
+        }
+        
+        .rating-cell {
+            position: relative;
+            transition: background-color 0.2s ease;
+        }
+        
+        .rating-cell:hover {
+            background-color: var(--primary-light);
+        }
+        
+        /* Skill level colors */
+        .rating-cell.selected-1 { background-color: #ffebee; }
+        .rating-cell.selected-2 { background-color: #fff3e0; }
+        .rating-cell.selected-3 { background-color: #fffde7; }
+        .rating-cell.selected-4 { background-color: #e8f5e9; }
+        .rating-cell.selected-5 { background-color: #e1f5fe; }
+        
+        input[type="radio"] {
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            transition: transform 0.2s ease;
+        }
+        
+        input[type="radio"]:hover {
+            transform: scale(1.2);
+        }
+        
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 150px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -75px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.85em;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .editable-skill {
+            border: none;
+            background: transparent;
+            width: 100%;
+            font-weight: 500;
+            font-size: inherit;
+            font-family: inherit;
+            padding: 4px;
+            transition: all 0.2s ease;
+        }
+        
+        .editable-skill:focus {
+            outline: 2px solid var(--primary-color);
+            border-radius: 4px;
+            background: white;
+        }
+        
+        .add-skill-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .add-skill-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 147, 208, 0.3);
+        }
+        
+        .add-skill-btn::before {
+            content: '+';
+            font-size: 1.2em;
+        }
+        
+        .remove-skill-btn {
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85em;
+            margin-left: 10px;
+            transition: all 0.2s ease;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .remove-skill-btn:hover {
+            background: #c0392b;
+            transform: scale(1.05);
+        }
+        
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+        
+        .checkbox-item:hover {
+            background: var(--primary-light);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--primary-color);
+        }
+        
+        input[type="text"], 
+        textarea, 
+        select,
+        input[type="email"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background-color: white;
+        }
+        
+        input[type="text"]:focus, 
+        textarea:focus, 
+        select:focus,
+        input[type="email"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 147, 208, 0.1);
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 147, 208, 0.1);
+        }
+        
+        /* Remove default arrow in Edge */
+        select::-ms-value {
+            background-color: transparent;
+            color: #333;
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: inherit;
+        }
+        
+        select {
+            cursor: pointer;
+            background-color: white;
+            background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"%3E%3Cpath fill="%230093D0" d="M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z"/%3E%3C/svg%3E');
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 36px;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+        
+        select option {
+            background-color: white;
+            color: #333;
+        }
+        
+        /* Firefox specific fix */
+        select:-moz-focusring {
+            color: transparent;
+            text-shadow: 0 0 0 #000;
+        }
+        
+        /* IE specific fix */
+        select::-ms-expand {
+            display: none;
+        }
+        
+        .project-container {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 25px 20px 20px 20px;
+            margin-bottom: 20px;
+            position: relative;
+            animation: slideInUp 0.4s ease;
+            transition: all 0.3s ease;
+        }
+        
+        .project-container:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 12px rgba(0, 147, 208, 0.1);
+        }
+        
+        .project-number {
+            background: var(--primary-color);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            position: absolute;
+            top: -10px;
+            left: 20px;
+        }
+        
+        .project-fields {
+            display: grid;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .remove-project-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        
+        .remove-project-btn:hover {
+            background: #c0392b;
+            transform: rotate(90deg);
+        }
+        
+        .add-project-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 20px auto 0;
+            transition: all 0.3s ease;
+        }
+        
+        .add-project-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 147, 208, 0.3);
+        }
+        
+        .add-project-btn::before {
+            content: '+';
+            font-size: 1.3em;
+        }
+        
+        .submit-section {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 14px 40px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 147, 208, 0.4);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        .submit-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .submit-btn:hover::after {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid var(--info-color);
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            animation: slideInLeft 0.4s ease;
+        }
+        
+        .info-box.warning {
+            background: #fff3cd;
+            border-color: #ffc107;
+        }
+        
+        .info-box.warning p {
+            color: #856404;
+        }
+        
+        .info-box p {
+            color: #1565c0;
+            font-size: 0.95em;
+            margin: 0 0 8px 0;
+        }
+        
+        .info-box p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .info-box ul {
+            margin: 8px 0;
+            padding-left: 0;
+            list-style: none;
+        }
+        
+        .info-box li {
+            margin: 4px 0;
+            padding-left: 20px;
+            position: relative;
+            color: #1565c0;
+            font-size: 0.9em;
+        }
+        
+        .info-box li::before {
+            content: '•';
+            position: absolute;
+            left: 8px;
+            font-weight: bold;
+        }
+        
+        .info-box li strong {
+            color: #0d47a1;
+        }
+        
+        .section.optional-hidden {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        
+        /* Mobile Styles */
+        @media (max-width: 768px) {
+            .container {
+                border-radius: 0;
+            }
+            
+            form {
+                padding: 20px;
+            }
+            
+            .checkbox-group {
+                grid-template-columns: 1fr;
+            }
+            
+            select {
+                background-size: 16px;
+                background-position: right 8px center;
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+            
+            .section-title {
+                font-size: 1.15em;
+                padding-right: 30px;
+            }
+            
+            .section-title small {
+                display: block;
+                margin-left: 0;
+                margin-top: 4px;
+            }
+            
+            .section-title {
+                font-size: 1.15em;
+                padding-right: 30px;
+            }
+            
+            .section-title small {
+                display: block;
+                margin-left: 0;
+                margin-top: 4px;
+            }
+            
+            table {
+                font-size: 0.85em;
+            }
+            
+            th, td {
+                padding: 8px 4px;
+            }
+            
+            .project-container {
+                padding: 15px;
+                padding-top: 25px;
+            }
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        /* Better cross-browser select styling */
+        select {
+            font-family: inherit;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        
+        /* Mobile-specific fixes */
+        @media (hover: none) and (pointer: coarse) {
+            select {
+                font-size: 16px !important;
+            }
+        }
+        
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+            }
+            
+            .container {
+                box-shadow: none;
+            }
+            
+            .add-skill-btn,
+            .remove-skill-btn,
+            .add-project-btn,
+            .remove-project-btn {
+                display: none;
+            }
+            
+            .header {
+                background: none;
+                color: black;
+                border-bottom: 2px solid var(--primary-color);
+            }
+            
+            input[type="radio"]:not(:checked),
+            input[type="checkbox"]:not(:checked) {
+                opacity: 0.3;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>RSS Team Skills & Interest Survey</h1>
+            <p>Help us understand your skills and interests for upcoming projects</p>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar" style="width: 0%;"></div>
+            </div>
+            <div class="progress-text" id="progressText">0% Complete</div>
+        </div>
+        
+        <form id="surveyForm" action="https://formspree.io/f/xyzjrboz" method="POST">
+            <!-- Hidden field for your email -->
+            <input type="hidden" name="_subject" value="New Team Skills Survey Response">
+            <input type="hidden" name="_cc" value="jolsen@tql.com">
+            <input type="hidden" name="_next" value="https://YOUR-USERNAME.github.io/YOUR-REPOSITORY/thank-you.html">
+            
+            <!-- Respondent Info -->
+            <div class="section">
+                <div class="form-group">
+                    <label for="name" class="required">Your Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email" class="required">Your Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+            </div>
+            
+            <!-- 1. Skill Proficiency -->
+            <div class="section">
+                <h2 class="section-title">1. Skill Proficiency</h2>
+                <div class="info-box">
+                    <p><strong>Rate your experience level with each skill:</strong></p>
+                    <ul>
+                        <li><strong>1 - No experience:</strong> Never used or learned this skill</li>
+                        <li><strong>2 - Basic/familiar:</strong> Some exposure, limited practical use</li>
+                        <li><strong>3 - Comfortable:</strong> Can use independently for routine tasks</li>
+                        <li><strong>4 - Proficient:</strong> Strong skills, can handle complex tasks</li>
+                        <li><strong>5 - Expert:</strong> Deep expertise, can teach/mentor others</li>
+                    </ul>
+                    <p style="margin-top: 10px; color: #e74c3c;"><strong>⚠️ Required:</strong> Please rate at least one skill to continue.</p>
+                </div>
+                
+                <div class="skill-groups">
+                    <!-- Microsoft Tools Group -->
+                    <div class="skill-group">
+                        <h3 class="skill-group-title">Microsoft Tools & Cloud</h3>
+                        <div class="skill-matrix">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Skill</th>
+                                        <th><div class="tooltip">1<span class="tooltiptext">No experience</span></div></th>
+                                        <th><div class="tooltip">2<span class="tooltiptext">Basic/familiar</span></div></th>
+                                        <th><div class="tooltip">3<span class="tooltiptext">Comfortable</span></div></th>
+                                        <th><div class="tooltip">4<span class="tooltiptext">Proficient</span></div></th>
+                                        <th><div class="tooltip">5<span class="tooltiptext">Expert</span></div></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>SharePoint</td>
+                                        <td class="rating-cell"><input type="radio" name="skill_sharepoint" value="1"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_sharepoint" value="2"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_sharepoint" value="3"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_sharepoint" value="4"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_sharepoint" value="5"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Copilot/MS AI tools</td>
+                                        <td class="rating-cell"><input type="radio" name="skill_copilot" value="1"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_copilot" value="2"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_copilot" value="3"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_copilot" value="4"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_copilot" value="5"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Power BI</td>
+                                        <td class="rating-cell"><input type="radio" name="skill_powerbi" value="1"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_powerbi" value="2"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_powerbi" value="3"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_powerbi" value="4"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_powerbi" value="5"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Azure/Microsoft 365</td>
+                                        <td class="rating-cell"><input type="radio" name="skill_azure" value="1"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_azure" value="2"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_azure" value="3"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_azure" value="4"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_azure" value="5"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Excel (Advanced)</td>
+                                        <td class="rating-cell"><input type="radio" name="skill_excel" value="1"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_excel" value="2"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_excel" value="3"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_excel" value="4"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_excel" value="5"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    
+                    <!-- Networking & Infrastructure Group -->
+                    <div class="skill-group">
+                        <h3 class="skill-group-title">Networking & Infrastructure</h3>
+                        <div class="skill-matrix">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Skill</th>
+                                        <th><div class="tooltip">1<span class="tooltiptext">No experience</span></div></th>
+                                        <th><div class="tooltip">2<span class="tooltiptext">Basic/familiar</span></div></th>
+                                        <th><div class="tooltip">3<span class="tooltiptext">Comfortable</span></div></th>
+                                        <th><div class="tooltip">4<span class="tooltiptext">Proficient</span></div></th>
+                                        <th><div class="tooltip">5<span class="tooltiptext">Expert</span></div></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>VeloCloud/SD-WAN</td>
+                                        <td class="rating-cell"><input type="radio" name="skill_velocloud" value="1"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_velocloud" value="2"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_velocloud" value="3"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_velocloud" value="4"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_velocloud" value="5"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Network Switches (Cisco/Juniper/etc.)</td>
+                                        <td class="rating-cell"><input type="radio" name="skill_switches" value="1"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_switches" value="2"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_switches" value="3"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_switches" value="4"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_switches" value="5"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Firewall Management</td>
+                                        <td class="rating-cell"><input type="radio" name="skill_firewall" value="1"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_firewall" value="2"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_firewall" value="3"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_firewall" value="4"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_firewall" value="5"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Network Protocols (TCP/IP, VLAN, etc.)</td>
+                                        <td class="rating-cell"><input type="radio" name="skill_protocols" value="1"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_protocols" value="2"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_protocols" value="3"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_protocols" value="4"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_protocols" value="5"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    </div>
+                    
+                    <!-- Development Group -->
+                    <div class="skill-group">
+                        <h3 class="skill-group-title">Development & Programming</h3>
+                        <div class="skill-matrix">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Skill</th>
+                                        <th><div class="tooltip">1<span class="tooltiptext">No experience</span></div></th>
+                                        <th><div class="tooltip">2<span class="tooltiptext">Basic/familiar</span></div></th>
+                                        <th><div class="tooltip">3<span class="tooltiptext">Comfortable</span></div></th>
+                                        <th><div class="tooltip">4<span class="tooltiptext">Proficient</span></div></th>
+                                        <th><div class="tooltip">5<span class="tooltiptext">Expert</span></div></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Python</td>
+                                        <td class="rating-cell"><input type="radio" name="skill_python" value="1"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_python" value="2"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_python" value="3"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_python" value="4"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_python" value="5"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>C++</td>
+                                        <td class="rating-cell"><input type="radio" name="skill_cpp" value="1"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_cpp" value="2"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_cpp" value="3"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_cpp" value="4"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_cpp" value="5"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Java</td>
+                                        <td class="rating-cell"><input type="radio" name="skill_java" value="1"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_java" value="2"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_java" value="3"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_java" value="4"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_java" value="5"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>SQL</td>
+                                        <td class="rating-cell"><input type="radio" name="skill_sql" value="1"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_sql" value="2"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_sql" value="3"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_sql" value="4"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_sql" value="5"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Git/Azure DevOps</td>
+                                        <td class="rating-cell"><input type="radio" name="skill_git" value="1"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_git" value="2"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_git" value="3"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_git" value="4"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_git" value="5"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Automation & Integration Group -->
+                    <div class="skill-group">
+                        <h3 class="skill-group-title">Automation & Integration</h3>
+                        <div class="skill-matrix">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Skill</th>
+                                        <th><div class="tooltip">1<span class="tooltiptext">No experience</span></div></th>
+                                        <th><div class="tooltip">2<span class="tooltiptext">Basic/familiar</span></div></th>
+                                        <th><div class="tooltip">3<span class="tooltiptext">Comfortable</span></div></th>
+                                        <th><div class="tooltip">4<span class="tooltiptext">Proficient</span></div></th>
+                                        <th><div class="tooltip">5<span class="tooltiptext">Expert</span></div></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Automation tools (e.g., Power Automate, Zapier)</td>
+                                        <td class="rating-cell"><input type="radio" name="skill_automation" value="1"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_automation" value="2"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_automation" value="3"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_automation" value="4"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_automation" value="5"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>OCR tools</td>
+                                        <td class="rating-cell"><input type="radio" name="skill_ocr" value="1"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_ocr" value="2"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_ocr" value="3"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_ocr" value="4"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_ocr" value="5"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>API Integration</td>
+                                        <td class="rating-cell"><input type="radio" name="skill_api" value="1"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_api" value="2"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_api" value="3"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_api" value="4"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_api" value="5"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- IT Systems Group -->
+                    <div class="skill-group">
+                        <h3 class="skill-group-title">IT Systems & Infrastructure</h3>
+                        <div class="skill-matrix">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Skill</th>
+                                        <th><div class="tooltip">1<span class="tooltiptext">No experience</span></div></th>
+                                        <th><div class="tooltip">2<span class="tooltiptext">Basic/familiar</span></div></th>
+                                        <th><div class="tooltip">3<span class="tooltiptext">Comfortable</span></div></th>
+                                        <th><div class="tooltip">4<span class="tooltiptext">Proficient</span></div></th>
+                                        <th><div class="tooltip">5<span class="tooltiptext">Expert</span></div></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>ServiceNow</td>
+                                        <td class="rating-cell"><input type="radio" name="skill_servicenow" value="1"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_servicenow" value="2"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_servicenow" value="3"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_servicenow" value="4"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_servicenow" value="5"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Active Directory</td>
+                                        <td class="rating-cell"><input type="radio" name="skill_activedirectory" value="1"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_activedirectory" value="2"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_activedirectory" value="3"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_activedirectory" value="4"></td>
+                                        <td class="rating-cell"><input type="radio" name="skill_activedirectory" value="5"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Custom Skills -->
+                    <div class="skill-group" id="customSkillsGroup" style="display: none;">
+                        <h3 class="skill-group-title">Additional Skills</h3>
+                        <div class="skill-matrix">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Skill</th>
+                                        <th><div class="tooltip">1<span class="tooltiptext">No experience</span></div></th>
+                                        <th><div class="tooltip">2<span class="tooltiptext">Basic/familiar</span></div></th>
+                                        <th><div class="tooltip">3<span class="tooltiptext">Comfortable</span></div></th>
+                                        <th><div class="tooltip">4<span class="tooltiptext">Proficient</span></div></th>
+                                        <th><div class="tooltip">5<span class="tooltiptext">Expert</span></div></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="customSkillsBody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="button" class="add-skill-btn" onclick="addSkillRow()">Add Custom Skill</button>
+            </div>
+            
+            <!-- 2. Learning Interests -->
+            <div class="section">
+                <h2 class="section-title">2. Learning Interests <small style="background: #e74c3c; color: white;">Required</small></h2>
+                <label>Select all skills/tools you're interested in learning: <span class="required" style="color: #e74c3c;">(Select at least one)</span></label>
+                
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="learn_sharepoint" name="learning_interests" value="SharePoint">
+                        <label for="learn_sharepoint">SharePoint</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="learn_copilot" name="learning_interests" value="Copilot/MS AI">
+                        <label for="learn_copilot">Copilot/MS AI</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="learn_automation" name="learning_interests" value="Automation tools">
+                        <label for="learn_automation">Automation tools</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="learn_ocr" name="learning_interests" value="OCR">
+                        <label for="learn_ocr">OCR</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="learn_api" name="learning_interests" value="API Integration">
+                        <label for="learn_api">API Integration</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="learn_python" name="learning_interests" value="Python">
+                        <label for="learn_python">Python</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="learn_cpp" name="learning_interests" value="C++">
+                        <label for="learn_cpp">C++</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="learn_java" name="learning_interests" value="Java">
+                        <label for="learn_java">Java</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="learn_sql" name="learning_interests" value="SQL">
+                        <label for="learn_sql">SQL</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="learn_servicenow" name="learning_interests" value="ServiceNow">
+                        <label for="learn_servicenow">ServiceNow</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="learn_activedirectory" name="learning_interests" value="Active Directory">
+                        <label for="learn_activedirectory">Active Directory</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="learn_powerbi" name="learning_interests" value="Power BI">
+                        <label for="learn_powerbi">Power BI</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="learn_azure" name="learning_interests" value="Azure/Microsoft 365">
+                        <label for="learn_azure">Azure/Microsoft 365</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="learn_git" name="learning_interests" value="Git/Azure DevOps">
+                        <label for="learn_git">Git/Azure DevOps</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="learn_excel" name="learning_interests" value="Excel (Advanced)">
+                        <label for="learn_excel">Excel (Advanced)</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="learn_velocloud" name="learning_interests" value="VeloCloud/SD-WAN">
+                        <label for="learn_velocloud">VeloCloud/SD-WAN</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="learn_switches" name="learning_interests" value="Network Switches">
+                        <label for="learn_switches">Network Switches</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="learn_firewall" name="learning_interests" value="Firewall Management">
+                        <label for="learn_firewall">Firewall Management</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="learn_protocols" name="learning_interests" value="Network Protocols">
+                        <label for="learn_protocols">Network Protocols</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="learn_none" name="learning_interests" value="None" onclick="handleNoneCheckbox(this)">
+                        <label for="learn_none">None - Not interested in learning new skills at this time</label>
+                    </div>
+                </div>
+                
+                <div class="form-group" style="margin-top: 15px;">
+                    <label for="other_learning">Other learning interests (please specify)</label>
+                    <input type="text" id="other_learning" name="other_learning_interests" placeholder="e.g., Machine Learning, Docker, Cloud Computing">
+                </div>
+            </div>
+            
+            <!-- 3. Project Participation Interest -->
+            <div class="section">
+                <h2 class="section-title participation">3. Project Participation Interest</h2>
+                <div class="form-group">
+                    <label for="project_interest" class="required">Are you interested in working on team projects?</label>
+                    <select id="project_interest" name="project_interest" required onchange="toggleProjectSection(this.value)">
+                        <option value="">Please select</option>
+                        <option value="yes-lead">Yes - I'd like to lead projects</option>
+                        <option value="yes-participate">Yes - I'd like to participate but not lead</option>
+                        <option value="yes-support">Yes - I can provide occasional support/consultation</option>
+                        <option value="maybe">Maybe - depends on the project and timing</option>
+                        <option value="no">No - not at this time</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="project_interest_details" style="display: none;">
+                    <label for="interest_details">Please tell us more about your interest/constraints</label>
+                    <textarea id="interest_details" name="interest_details" placeholder="e.g., I'm interested in data-related projects, I can only participate in Q2, I prefer short-term projects..."></textarea>
+                </div>
+            </div>
+            
+            <!-- 4. Project Ideas -->
+            <div class="section" id="projectIdeasSection">
+                <h2 class="section-title">4. Project Ideas <small style="background: #e74c3c; color: white;">Required</small></h2>
+                <div class="info-box" id="projectInfoBox">
+                    <p>Share your project ideas. <strong style="color: #e74c3c;">At least one complete project is required (all fields).</strong></p>
+                    <p style="margin-top: 8px; font-size: 0.9em;">For each project, please provide: Title, Who Benefits, and Description.</p>
+                </div>
+                
+                <div id="projectsContainer">
+                    <div class="project-container" data-project="1">
+                        <div class="project-number">1</div>
+                        <div class="project-fields">
+                            <div class="form-group">
+                                <label for="project1_title" class="required">Project Title</label>
+                                <input type="text" id="project1_title" name="project1_title" placeholder="e.g., Automated Report Generator (Required)" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="project1_benefits" class="required">Who Benefits</label>
+                                <input type="text" id="project1_benefits" name="project1_benefits" placeholder="e.g., Management team, End-users, Internal processes" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="project1_description" class="required">Project Description</label>
+                                <textarea id="project1_description" name="project1_description" placeholder="Describe the project, its goals, and expected outcomes..." required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="button" class="add-project-btn" onclick="addProject()">Add Another Project</button>
+            </div>
+            
+            <!-- 5. Weekly Time Availability -->
+            <div class="section">
+                <h2 class="section-title">5. Weekly Time Availability</h2>
+                <div class="form-group">
+                    <label for="time_availability" class="required">How much time can you dedicate to projects per week?</label>
+                    <select id="time_availability" name="time_availability" required>
+                        <option value="">Select your availability</option>
+                        <option value="none">Not applicable / No time available</option>
+                        <option value="< 1 hr/week">Less than 1 hour per week</option>
+                        <option value="1-2 hrs/week">1-2 hours per week</option>
+                        <option value="2-4 hrs/week">2-4 hours per week</option>
+                        <option value="4+ hrs/week">4+ hours per week</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- 6. Additional Input -->
+            <div class="section">
+                <h2 class="section-title">6. Additional Input <small style="background: #4caf50; color: white;">Optional</small></h2>
+                <div class="form-group">
+                    <label for="additional_input">Any other skills, tools you'd like to mention, or barriers you face in participating in projects?</label>
+                    <textarea id="additional_input" name="additional_input" placeholder="Share any additional thoughts, constraints, or suggestions..."></textarea>
+                </div>
+            </div>
+            
+            <!-- Submit -->
+            <div class="submit-section">
+                <p style="font-size: 0.85em; color: #666; text-align: center; margin-bottom: 20px;">
+                    <span style="font-size: 1.1em;">🔒</span> Your responses will be kept confidential and used only for team planning purposes.
+                </p>
+                <button type="submit" class="submit-btn">Submit Survey</button>
+            </div>
+        </form>
+    </div>
+    
+    <script>
+        let customSkillCount = 0;
+        let projectCount = 1;
+        
+        // Initialize progress to 0
+        document.addEventListener('DOMContentLoaded', function() {
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            if (progressBar) {
+                progressBar.style.width = '0%';
+                progressBar.style.transition = 'none'; // Disable transition for initial set
+                setTimeout(function() {
+                    progressBar.style.transition = 'width 0.3s ease'; // Re-enable transition
+                }, 50);
+            }
+            if (progressText) progressText.textContent = '0% Complete';
+            // Also handle the other learning interests text field
+            const otherLearningField = document.getElementById('other_learning');
+            if (otherLearningField) {
+                otherLearningField.addEventListener('input', function() {
+                    if (this.value.trim() !== '') {
+                        const noneCheckbox = document.getElementById('learn_none');
+                        if (noneCheckbox && noneCheckbox.checked) {
+                            noneCheckbox.checked = false;
+                        }
+                    }
+                    updateProgress();
+                });
+            }
+        });
+        
+        // Handle None checkbox in learning interests
+        function handleNoneCheckbox(noneCheckbox) {
+            const allCheckboxes = document.querySelectorAll('input[name="learning_interests"]');
+            
+            if (noneCheckbox.checked) {
+                // Uncheck all other checkboxes
+                allCheckboxes.forEach(checkbox => {
+                    if (checkbox.id !== 'learn_none') {
+                        checkbox.checked = false;
+                    }
+                });
+                // Also clear the other learning interests text field
+                const otherLearning = document.getElementById('other_learning');
+                if (otherLearning) otherLearning.value = '';
+            }
+            
+            updateProgress();
+        }
+        
+        // Prevent selecting other options when None is checked
+        document.addEventListener('DOMContentLoaded', function() {
+            const learningCheckboxes = document.querySelectorAll('input[name="learning_interests"]:not(#learn_none)');
+            learningCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        const noneCheckbox = document.getElementById('learn_none');
+                        if (noneCheckbox && noneCheckbox.checked) {
+                            noneCheckbox.checked = false;
+                        }
+                    }
+                    updateProgress();
+                });
+            });
+        });
+        
+        // Progress bar functionality
+        function updateProgress() {
+            try {
+                const sections = document.querySelectorAll('.section');
+                let completedSections = 0;
+                
+                sections.forEach((section, index) => {
+                    let sectionComplete = false;
+                    
+                    // Section 0: Personal Info (Name & Email) - REQUIRED
+                    if (index === 0) {
+                        const name = section.querySelector('input[name="name"]');
+                        const email = section.querySelector('input[name="email"]');
+                        sectionComplete = (name && name.value.trim() !== '') && 
+                                        (email && email.value.trim() !== '');
+                    }
+                    
+                    // Section 1: Skill Proficiency - REQUIRED (at least one)
+                    else if (index === 1) {
+                        const ratedSkills = section.querySelectorAll('input[type="radio"]:checked');
+                        sectionComplete = ratedSkills.length > 0;
+                    }
+                    
+                    // Section 2: Learning Interests - REQUIRED (at least one)
+                    else if (index === 2) {
+                        const checkedInterests = section.querySelectorAll('input[type="checkbox"]:checked');
+                        const otherInterests = section.querySelector('input[name="other_learning_interests"]');
+                        sectionComplete = checkedInterests.length > 0 || (otherInterests && otherInterests.value.trim() !== '');
+                    }
+                    
+                    // Section 3: Project Participation Interest - REQUIRED
+                    else if (index === 3) {
+                        const projectInterest = section.querySelector('select[name="project_interest"]');
+                        sectionComplete = projectInterest && projectInterest.value !== '';
+                    }
+                    
+                    // Section 4: Project Ideas - REQUIRED (at least one complete project)
+                    else if (index === 4) {
+                        // Check if at least one project has all three fields filled
+                        const projects = section.querySelectorAll('.project-container');
+                        for (let project of projects) {
+                            const title = project.querySelector('input[id*="_title"]');
+                            const benefits = project.querySelector('input[id*="_benefits"]');
+                            const description = project.querySelector('textarea[id*="_description"]');
+                            
+                            if (title && title.value.trim() !== '' &&
+                                benefits && benefits.value.trim() !== '' &&
+                                description && description.value.trim() !== '') {
+                                sectionComplete = true;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    // Section 5: Time Availability - REQUIRED
+                    else if (index === 5) {
+                        const timeAvail = section.querySelector('select[name="time_availability"]');
+                        sectionComplete = timeAvail && timeAvail.value !== '';
+                    }
+                    
+                    // Section 6: Additional Input - OPTIONAL
+                    else if (index === 6) {
+                        sectionComplete = true; // Always consider optional section as complete
+                    }
+                    
+                    // Update visual indicator
+                    const sectionTitle = section.querySelector('h2.section-title');
+                    if (sectionTitle) {
+                        if (sectionComplete) {
+                            sectionTitle.classList.add('complete');
+                            if (index !== 6) completedSections++; // Don't count optional section
+                        } else {
+                            sectionTitle.classList.remove('complete');
+                        }
+                    }
+                });
+                
+                // Calculate progress based on 6 required sections
+                const progress = (completedSections / 6) * 100;
+                const progressBar = document.getElementById('progressBar');
+                const progressText = document.getElementById('progressText');
+                
+                if (progressBar) progressBar.style.width = progress + '%';
+                if (progressText) progressText.textContent = Math.round(progress) + '% Complete';
+            } catch (error) {
+                console.error('Error updating progress:', error);
+            }
+        }
+        
+        // Add event listeners for progress updates when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                const formInputs = document.querySelectorAll('input, select, textarea');
+                formInputs.forEach(input => {
+                    input.addEventListener('change', updateProgress);
+                    input.addEventListener('input', updateProgress);
+                });
+                
+                // Set initial progress to 0 before calculation
+                const progressBar = document.getElementById('progressBar');
+                const progressText = document.getElementById('progressText');
+                if (progressBar) progressBar.style.width = '0%';
+                if (progressText) progressText.textContent = '0% Complete';
+                
+                // Initial progress check
+                updateProgress();
+                // Double-check after a brief delay to ensure all elements are loaded
+                setTimeout(updateProgress, 100);
+                
+                // Highlight selected skill ratings
+                document.addEventListener('change', function(e) {
+                    if (e.target && e.target.type === 'radio' && e.target.name.startsWith('skill_')) {
+                        // Remove previous selection highlights for this skill
+                        const skillRow = e.target.closest('tr');
+                        if (skillRow) {
+                            skillRow.querySelectorAll('.rating-cell').forEach(cell => {
+                                cell.classList.remove('selected-1', 'selected-2', 'selected-3', 'selected-4', 'selected-5');
+                            });
+                            
+                            // Add highlight to selected rating
+                            const selectedCell = e.target.closest('.rating-cell');
+                            if (selectedCell) {
+                                selectedCell.classList.add('selected-' + e.target.value);
+                            }
+                        }
+                    }
+                });
+                
+                // Form submission handler
+                const surveyForm = document.getElementById('surveyForm');
+                if (surveyForm) {
+                    surveyForm.addEventListener('submit', handleFormSubmit);
+                }
+            } catch (error) {
+                console.error('Error setting up event listeners:', error);
+            }
+        });
+        
+        // Toggle project interest details
+        function toggleProjectSection(value) {
+            try {
+                const detailsSection = document.getElementById('project_interest_details');
+                const timeAvailability = document.getElementById('time_availability');
+                const projectInfoBox = document.getElementById('projectInfoBox');
+                
+                // Show details field for all options except "no"
+                if (value && value !== 'no') {
+                    if (detailsSection) detailsSection.style.display = 'block';
+                } else {
+                    if (detailsSection) detailsSection.style.display = 'none';
+                }
+                
+                // Update project info box message based on participation interest
+                if (value === 'no' && projectInfoBox) {
+                    projectInfoBox.innerHTML = '<p>Even though you cannot participate now, <strong style="color: #e74c3c;">please share at least one complete project idea (all fields required).</strong></p>' +
+                        '<p style="margin-top: 8px; font-size: 0.9em;">Your suggestions help us plan initiatives that might interest you in the future.</p>';
+                } else if (projectInfoBox) {
+                    projectInfoBox.innerHTML = '<p>Share your project ideas. <strong style="color: #e74c3c;">At least one complete project is required (all fields).</strong></p>' +
+                        '<p style="margin-top: 8px; font-size: 0.9em;">For each project, please provide: Title, Who Benefits, and Description.</p>';
+                }
+                
+                // Handle time availability based on interest
+                if (value === 'no') {
+                    // Suggest "none" for time availability when not interested
+                    if (timeAvailability && !timeAvailability.value) {
+                        timeAvailability.value = 'none';
+                    }
+                } else {
+                    // Reset time availability if it was set to "none" and they change their mind
+                    if (timeAvailability && timeAvailability.value === 'none' && value !== 'no') {
+                        timeAvailability.value = '';
+                    }
+                }
+                
+                updateProgress();
+            } catch (error) {
+                console.error('Error in toggleProjectSection:', error);
+            }
+        }
+        
+        // Add custom skill row
+        function addSkillRow() {
+            try {
+                customSkillCount++;
+                const skillName = 'custom_skill_' + customSkillCount;
+                
+                // Show custom skills group if hidden
+                const customGroup = document.getElementById('customSkillsGroup');
+                if (customGroup) customGroup.style.display = 'block';
+                
+                const tbody = document.getElementById('customSkillsBody');
+                if (!tbody) return;
+                
+                const newRow = document.createElement('tr');
+                newRow.style.animation = 'slideInUp 0.4s ease';
+                newRow.innerHTML = '<td>' +
+                    '<input type="text" class="editable-skill" name="' + skillName + '_name" placeholder="Enter skill name" required>' +
+                    '<button type="button" class="remove-skill-btn" onclick="removeSkillRow(this)">Remove</button>' +
+                    '</td>' +
+                    '<td class="rating-cell"><input type="radio" name="' + skillName + '_rating" value="1"></td>' +
+                    '<td class="rating-cell"><input type="radio" name="' + skillName + '_rating" value="2"></td>' +
+                    '<td class="rating-cell"><input type="radio" name="' + skillName + '_rating" value="3"></td>' +
+                    '<td class="rating-cell"><input type="radio" name="' + skillName + '_rating" value="4"></td>' +
+                    '<td class="rating-cell"><input type="radio" name="' + skillName + '_rating" value="5"></td>';
+                
+                tbody.appendChild(newRow);
+                
+                // Add event listeners to new inputs
+                newRow.querySelectorAll('input').forEach(input => {
+                    input.addEventListener('change', updateProgress);
+                    input.addEventListener('input', updateProgress);
+                });
+            } catch (error) {
+                console.error('Error adding skill row:', error);
+            }
+        }
+        
+        // Remove skill row
+        function removeSkillRow(button) {
+            try {
+                const row = button.closest('tr');
+                if (!row) return;
+                
+                row.style.animation = 'fadeOut 0.3s ease';
+                setTimeout(function() {
+                    row.remove();
+                    updateProgress();
+                    
+                    // Hide custom skills group if no custom skills remain
+                    const tbody = document.getElementById('customSkillsBody');
+                    const customGroup = document.getElementById('customSkillsGroup');
+                    if (tbody && customGroup && tbody.children.length === 0) {
+                        customGroup.style.display = 'none';
+                    }
+                }, 300);
+            } catch (error) {
+                console.error('Error removing skill row:', error);
+            }
+        }
+        
+        // Add project
+        function addProject() {
+            try {
+                if (projectCount >= 3) {
+                    alert('You can add up to 3 projects only.');
+                    return;
+                }
+                
+                projectCount++;
+                const container = document.getElementById('projectsContainer');
+                if (!container) return;
+                
+                const newProject = document.createElement('div');
+                newProject.className = 'project-container';
+                newProject.setAttribute('data-project', projectCount);
+                
+                newProject.innerHTML = '<div class="project-number">' + projectCount + '</div>' +
+                    '<button type="button" class="remove-project-btn" onclick="removeProject(this)">×</button>' +
+                    '<div class="project-fields">' +
+                    '<div class="form-group">' +
+                    '<label for="project' + projectCount + '_title" class="required">Project Title</label>' +
+                    '<input type="text" id="project' + projectCount + '_title" name="project' + projectCount + '_title" placeholder="e.g., Customer Feedback Dashboard (Required)" required>' +
+                    '</div>' +
+                    '<div class="form-group">' +
+                    '<label for="project' + projectCount + '_benefits" class="required">Who Benefits</label>' +
+                    '<input type="text" id="project' + projectCount + '_benefits" name="project' + projectCount + '_benefits" placeholder="e.g., Management team, End-users, Internal processes" required>' +
+                    '</div>' +
+                    '<div class="form-group">' +
+                    '<label for="project' + projectCount + '_description" class="required">Project Description</label>' +
+                    '<textarea id="project' + projectCount + '_description" name="project' + projectCount + '_description" placeholder="Describe the project, its goals, and expected outcomes..." required></textarea>' +
+                    '</div>' +
+                    '</div>';
+                
+                container.appendChild(newProject);
+                
+                // Add event listeners to new inputs
+                newProject.querySelectorAll('input, textarea').forEach(input => {
+                    input.addEventListener('change', updateProgress);
+                    input.addEventListener('input', updateProgress);
+                });
+                
+                // Hide add button if 3 projects
+                if (projectCount >= 3) {
+                    const addBtn = document.querySelector('.add-project-btn');
+                    if (addBtn) addBtn.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error adding project:', error);
+            }
+        }
+        
+        // Remove project
+        function removeProject(button) {
+            try {
+                const project = button.closest('.project-container');
+                if (!project) return;
+                
+                project.style.animation = 'fadeOut 0.4s ease';
+                
+                setTimeout(function() {
+                    project.remove();
+                    projectCount--;
+                    
+                    // Renumber remaining projects
+                    const projects = document.querySelectorAll('.project-container');
+                    projects.forEach(function(proj, index) {
+                        const num = index + 1;
+                        proj.setAttribute('data-project', num);
+                        const projectNum = proj.querySelector('.project-number');
+                        if (projectNum) projectNum.textContent = num;
+                        
+                        // Update field names and IDs
+                        proj.querySelectorAll('input, textarea').forEach(function(field) {
+                            const oldName = field.name;
+                            const oldId = field.id;
+                            if (oldName) {
+                                field.name = oldName.replace(/project\d+/, 'project' + num);
+                            }
+                            if (oldId) {
+                                field.id = oldId.replace(/project\d+/, 'project' + num);
+                            }
+                        });
+                        
+                        // Update labels
+                        proj.querySelectorAll('label').forEach(function(label) {
+                            const forAttr = label.getAttribute('for');
+                            if (forAttr) {
+                                label.setAttribute('for', forAttr.replace(/project\d+/, 'project' + num));
+                            }
+                        });
+                    });
+                    
+                    // Show add button again
+                    const addBtn = document.querySelector('.add-project-btn');
+                    if (addBtn) addBtn.style.display = 'flex';
+                    updateProgress();
+                }, 400);
+            } catch (error) {
+                console.error('Error removing project:', error);
+            }
+        }
+        
+        // Form submission handler
+        function handleFormSubmit(e) {
+            try {
+                // Validate name and email (already required by HTML5)
+                const name = document.querySelector('input[name="name"]');
+                const email = document.querySelector('input[name="email"]');
+                if (!name || !name.value.trim() || !email || !email.value.trim()) {
+                    e.preventDefault();
+                    alert('Please provide your name and email address.');
+                    return;
+                }
+                
+                // Validate at least one skill is rated
+                const skillInputs = document.querySelectorAll('input[type="radio"]:checked');
+                if (skillInputs.length === 0) {
+                    e.preventDefault();
+                    alert('Please rate at least one skill before submitting.');
+                    return;
+                }
+                
+                // Validate custom skills have ratings
+                const customSkills = document.querySelectorAll('.editable-skill');
+                for (let skill of customSkills) {
+                    if (skill.value && skill.value.trim()) {
+                        const skillName = skill.name.replace('_name', '_rating');
+                        const rating = document.querySelector('input[name="' + skillName + '"]:checked');
+                        if (!rating) {
+                            e.preventDefault();
+                            alert('Please rate the skill "' + skill.value + '" or remove it.');
+                            skill.focus();
+                            return;
+                        }
+                    }
+                }
+                
+                // Validate learning interests (at least one including "None")
+                const learningInterests = document.querySelectorAll('input[name="learning_interests"]:checked');
+                const otherLearning = document.querySelector('input[name="other_learning_interests"]');
+                if (learningInterests.length === 0 && (!otherLearning || !otherLearning.value.trim())) {
+                    e.preventDefault();
+                    alert('Please select at least one learning interest (you can select "None" if not interested in learning new skills).');
+                    return;
+                }
+                
+                // Validate project participation interest
+                const projectInterest = document.querySelector('select[name="project_interest"]');
+                if (!projectInterest || !projectInterest.value) {
+                    e.preventDefault();
+                    alert('Please select your project participation interest.');
+                    return;
+                }
+                
+                // Validate at least one complete project (all three fields)
+                let hasCompleteProject = false;
+                const projectContainers = document.querySelectorAll('.project-container');
+                for (let project of projectContainers) {
+                    const title = project.querySelector('input[id*="_title"]');
+                    const benefits = project.querySelector('input[id*="_benefits"]');
+                    const description = project.querySelector('textarea[id*="_description"]');
+                    
+                    if (title && title.value.trim() !== '' &&
+                        benefits && benefits.value.trim() !== '' &&
+                        description && description.value.trim() !== '') {
+                        hasCompleteProject = true;
+                        break;
+                    }
+                }
+                if (!hasCompleteProject) {
+                    e.preventDefault();
+                    alert('Please provide at least one complete project idea with title, who benefits, and description.');
+                    return;
+                }
+                
+                // Validate time availability
+                const timeAvail = document.querySelector('select[name="time_availability"]');
+                if (!timeAvail || !timeAvail.value) {
+                    e.preventDefault();
+                    alert('Please select your weekly time availability.');
+                    return;
+                }
+                
+                // Show confirmation
+                const confirmed = confirm('Thank you for completing the survey! Click OK to submit your responses.');
+                if (!confirmed) {
+                    e.preventDefault();
+                }
+            } catch (error) {
+                console.error('Error during form submission:', error);
+                e.preventDefault();
+                alert('An error occurred. Please check the form and try again.');
+            }
+        }
+        
+        // Add fade out animation keyframe if not already present
+        if (!document.getElementById('dynamicStyles')) {
+            const style = document.createElement('style');
+            style.id = 'dynamicStyles';
+            style.innerHTML = '@keyframes fadeOut { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.8); } }';
+            document.head.appendChild(style);
+        }
+    </script>
+</body>
+</html>
